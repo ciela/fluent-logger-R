@@ -9,11 +9,11 @@ FluentLogger <- setRefClass(
     
     post=function(label, data, timestamp=as.integer(Sys.time())) {
       tryCatch({
-        jsondata <- toJSON(list(paste(tag, label, sep="."), timestamp, data))
-        writeLines(jsondata, sender)
-        .self$flush()
-        invisible(TRUE)
-      },
+          jsondata <- toJSON(list(paste(tag, label, sep="."), timestamp, data))
+          writeLines(jsondata, sender)
+          .self$flush()
+          invisible(TRUE)
+        },
         warning=function(w) { message(w); invisible(FALSE) },
         error=function(e) { message(e); invisible(FALSE) }
       )
