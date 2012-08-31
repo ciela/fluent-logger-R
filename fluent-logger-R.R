@@ -69,10 +69,11 @@ getFluentLogger <- function(tag, host, port=24224, timeout=3) {
   key <- paste(tag, host, port, timeout, sep="_")
   if (is.null(loggers[[key]])) {
     # if loggers doesn't contain the key, make new FluentLogger.
+    stopF <- function(e) stop(paste("Failed to connect fluentd:", paste(host, port, sep=":")), call.=F)
     tryCatch(
       sender <- socketConnection(host, port, timeout=timeout),
-      warning=function(w) stop(paste("Failed to connect fluentd:", paste(host, port, sep=":")), call.=F),
-      error=function(e) stop(paste("Failed to connect fluentd:", paste(host, port, sep=":")), call.=F)
+      warning=stopF,
+      error=stopF
     )
     loggers[[key]] <- FluentLogger$new(tag=tag, host=host, port=port, timeout=timeout, sender=sender)
     assign(".loggers", loggers, envir=FluentLoggerEnv)
