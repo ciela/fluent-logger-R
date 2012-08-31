@@ -14,5 +14,5 @@ TODO
 Copyright
 ===============
 
-Copyright (c) 2012- K.Ota
-Apache License 2.0
+Copyright - (c) 2012 K.Ota  
+License - Apache License 2.0
