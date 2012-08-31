@@ -26,10 +26,9 @@ FluentLogger <- setRefClass(
             sender <<- NULL
             
             # delete from secret object .loggers
-            objName <- ".loggers"
-            loggers <- get(objName, envir=FluentLoggerEnv)
+            loggers <- get(".loggers", envir=FluentLoggerEnv)
             loggers[[paste(tag, host, port, timeout, sep="_")]] <- NULL
-            assign(objName, loggers, envir=FluentLoggerEnv)
+            assign(".loggers", loggers, envir=FluentLoggerEnv)
           }
         },
         warning=function(w) { message(w) }, # ignore
@@ -60,9 +59,8 @@ getFluentLogger <- function(tag, host, port=24224, timeout=3) {
   }
   
   # get secret object .loggers from FluentLoggerEnv
-  objName <- ".loggers"
-  if (exists(objName, envir=FluentLoggerEnv)) {
-    loggers <- get(objName, envir=FluentLoggerEnv)
+  if (exists(".loggers", envir=FluentLoggerEnv)) {
+    loggers <- get(".loggers", envir=FluentLoggerEnv)
   } else {
     loggers <- list()
   }
@@ -77,16 +75,15 @@ getFluentLogger <- function(tag, host, port=24224, timeout=3) {
       error=function(e) stop(paste("Failed to connect fluentd:", paste(host, port, sep=":")), call.=F)
     )
     loggers[[key]] <- FluentLogger$new(tag=tag, host=host, port=port, timeout=timeout, sender=sender)
-    assign(objName, loggers, envir=FluentLoggerEnv)
+    assign(".loggers", loggers, envir=FluentLoggerEnv)
   }
   
   loggers[[key]]
 }
 
-closeAll <- function() {
-  objName <- ".loggers"
-  if (exists("FluentLoggerEnv", envir=.GlobalEnv) && exists(objName, envir=FluentLoggerEnv)) {
-    loggers <- get(objName, envir=FluentLoggerEnv)
+closeAllFluentLoggers <- function() {
+  if (exists("FluentLoggerEnv", envir=.GlobalEnv) && exists(".loggers", envir=FluentLoggerEnv)) {
+    loggers <- get(".loggers", envir=FluentLoggerEnv)
     for (logger in loggers) {
       logger$close()
       logger <- NULL
@@ -96,10 +93,9 @@ closeAll <- function() {
   }
 }
 
-flushAll <- function() {
-  objName <- ".loggers"
-  if (exists("FluentLoggerEnv", envir=.GlobalEnv) && exists(objName, envir=FluentLoggerEnv)) {
-    loggers <- get(objName, envir=FluentLoggerEnv)
+flushAllFluentLoggers <- function() {
+  if (exists("FluentLoggerEnv", envir=.GlobalEnv) && exists(".loggers", envir=FluentLoggerEnv)) {
+    loggers <- get(".loggers", envir=FluentLoggerEnv)
     for (logger in loggers) {
       logger$flush()
     }
